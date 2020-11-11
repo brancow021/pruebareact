@@ -1,20 +1,30 @@
 import React from 'react'
-import { date } from 'yup'
 import { clienteAxios } from '../components/axios/axiosConfig'
 
 
-export const UseRegister = async(data) => {
-  return await clienteAxios
-    .post('/itemconfig/registrar', {
-      headers: {
-        'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
-      },
+export const UseRegister = async(data, update=false) => {
+  let URL = ''
 
-      data: JSON.stringify({
-        entidad: data.entidad,
-        llave: data.llave,
-        detalle: data.detalles
-      }),
-    },
-    )
+  if(!update){
+    URL = `/itemconfig/registrar`
+
+    return await clienteAxios
+    .post(URL, {
+      entidad: data.entidad,
+      llave: data.llave,
+      detalle: data.detalle
+    }
+  )
+
+  } else{
+    URL = `/itemconfig/editar`
+
+    return await clienteAxios
+    .put(URL, {
+      entidad: data.entidad,
+      llave: data.llave,
+      detalle: data.detalle
+    }
+  )
+  }
 }

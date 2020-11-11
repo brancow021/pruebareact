@@ -1,12 +1,16 @@
 import React,{ memo } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, Redirect } from 'react-router-dom'
 
 export const TableList = memo(({ data = [] }) => {
 
   const history = useHistory()
 
   const handleUpdate = (item) => {
-    history.push('/register', item)
+    history.push({
+      pathname: '/update', 
+      data: item,
+      update: true
+    })
   }
 
   return (

@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 
-export const SelectData = ({entitys = [], setEntitys, form}) => {
+export const SelectData = ({entitys = [], setEntitys, formik}) => {
 
   const handleSelect = (evt) => {
     const { value } = evt.target
     if(value !== '' && setEntitys){
       setEntitys(value)
 
-    } else if(form){
-      localStorage.setItem('values', value)
+    } else if(formik){
+      formik.values.entidad = value
     }
   }
 

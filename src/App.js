@@ -26,6 +26,11 @@ const App = () => {
           component={Register}
         />
 
+        <Route 
+          path="/update/"
+          component={Register}
+        />
+
         <Redirect
           to="/"
         />

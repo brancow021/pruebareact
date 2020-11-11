@@ -4,9 +4,27 @@ import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { SelectData } from './SelectData'
 import { UseRegister } from '../../hooks/useRegister'
+import swal from 'sweetalert';
+import { useHistory } from 'react-router-dom'
 
-export const Form = memo(({register=true}) => {
+
+
+export const Form = memo(() => {
+  const history = useHistory();
+  const [register, setregister] = useState(true)
   const [entitys, setentitys] = useState([])
+
+
+  useEffect(() => {
+    if(history.location.update){
+      setregister(false)
+
+      const { id_unico, detalle } = history.location.data
+
+      formik.values.llave = id_unico
+      formik.values.detalle = detalle
+    }
+  }, [])
 
   useEffect(() => {
     setentitys(JSON.parse(localStorage.getItem('entitys')))
@@ -17,7 +35,7 @@ export const Form = memo(({register=true}) => {
     initialValues:{
       entidad: '',
       llave: '',
-      detalles: '',
+      detalle: '',
     },
 
     validationSchema: Yup.object({
@@ -25,17 +43,26 @@ export const Form = memo(({register=true}) => {
 				.min(1,'Por favor seleccione una entidad')
 				.required('La entidad en necesaria'),
 
-			llave: Yup.number()
+			llave: Yup.string()
 				.min(1,'Ingrese una llave valida')
 				.required('La llave es obligatoria'),
 
-			detalles: Yup.string()
+			detalle: Yup.string()
 			
 		}),
 		onSubmit: data => (
-      data.entidad = localStorage.getItem('values'),
-      console.log(data),
-      UseRegister(data) .then(res => console.log(res.data))
+      UseRegister(data, register ? false : true).then(({data}) => {
+        if(data.status === 200){
+          swal(register ? 'Registro Exitoso' : 'Actualizacion exitosa', ":)", "success");
+          history.push('/')
+
+        } else if(data.status === 505){
+          swal('Ah ocurrido un error', 'Ingrese una llave valida' , "error");
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
 		)
   })
 
@@ -45,7 +72,7 @@ export const Form = memo(({register=true}) => {
         <h2>{register ? 'Registrar' : 'Actualizar'}</h2>
         <FormGroup onSubmit={formik.handleSubmit} className="form-lg">
           <div className="form-group">
-            <SelectData form={true} entitys={entitys} />
+            <SelectData formik={formik} entitys={entitys} />
           </div>
 
           <div className="form-group">
@@ -63,8 +90,8 @@ export const Form = memo(({register=true}) => {
           <div className="form-group">
             <label>Detalle</label>
             <input
-              id="detalles"
-              value={formik.values.detalles}
+              id="detalle"
+              value={formik.values.detalle}
               type="text"
               placeholder="Ingresa los detalles"
               class="form-control"

@@ -5,7 +5,7 @@ import { Nav } from './styles'
 export const Navbar = () => {
   return (
     <Nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-20">
-      <a className="navbar-brand" href="#">CRUD</a>
+      <Link className="navbar-brand" to="/">CRUD</Link>
 
       <button
         className="navbar-toggler"
