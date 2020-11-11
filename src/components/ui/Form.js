@@ -13,18 +13,24 @@ export const Form = memo(() => {
   const history = useHistory();
   const [register, setregister] = useState(true)
   const [entitys, setentitys] = useState([])
-
+  const [error, seterror] = useState(false)
 
   useEffect(() => {
     if(history.location.update){
       setregister(false)
-
+      console.log(history.location)
       const { id_unico, detalle } = history.location.data
 
       formik.values.llave = id_unico
       formik.values.detalle = detalle
+      formik.values.entidad = history.location.Entity
+      console.log(formik.values.entidad)
+
+    } else {
+      setregister(true)
+      formik.resetForm()
     }
-  }, [])
+  }, [history])
 
   useEffect(() => {
     setentitys(JSON.parse(localStorage.getItem('entitys')))
@@ -40,21 +46,28 @@ export const Form = memo(() => {
 
     validationSchema: Yup.object({
 			entidad: Yup.string()
-				.min(1,'Por favor seleccione una entidad')
+				.min(2,'Por favor seleccione una entidad')
 				.required('La entidad en necesaria'),
 
 			llave: Yup.string()
 				.min(1,'Ingrese una llave valida')
 				.required('La llave es obligatoria'),
 
-			detalle: Yup.string()
+      detalle: Yup.string()
+        .min(1,'Ingrese un detalle')
+        .required('El detalle es necesario'),
+
 			
 		}),
 		onSubmit: data => (
+      data.entidad === '' ? seterror(true)  : seterror(false),
+      
       UseRegister(data, register ? false : true).then(({data}) => {
         if(data.status === 200){
           swal(register ? 'Registro Exitoso' : 'Actualizacion exitosa', ":)", "success");
           history.push('/')
+
+          formik.resetForm()
 
         } else if(data.status === 505){
           swal('Ah ocurrido un error', 'Ingrese una llave valida' , "error");
@@ -72,7 +85,14 @@ export const Form = memo(() => {
         <h2>{register ? 'Registrar' : 'Actualizar'}</h2>
         <FormGroup onSubmit={formik.handleSubmit} className="form-lg">
           <div className="form-group">
-            <SelectData formik={formik} entitys={entitys} />
+            <SelectData entidad={formik.values.entidad} formik={formik} entitys={entitys} />
+            {formik.errors.entidad
+							? <div class="alert alert-danger" role="alert">
+                {formik.errors.entidad}
+              </div>
+
+							: null
+						}
           </div>
 
           <div className="form-group">
@@ -82,9 +102,17 @@ export const Form = memo(() => {
               value={formik.values.llave}
               type="text"
               placeholder="Ingresa la llave"
-              class="form-control" 
+              class="form-control"
+              onBlur={formik.handleBlur}
               onChange={formik.handleChange}
             />
+
+            {formik.touched.llave && formik.errors.llave
+							? <div class="alert alert-danger" role="alert">
+                {formik.errors.llave}
+              </div>
+							: null
+						}
           </div>
 
           <div className="form-group">
@@ -92,11 +120,19 @@ export const Form = memo(() => {
             <input
               id="detalle"
               value={formik.values.detalle}
+              onBlur={formik.handleBlur}
               type="text"
               placeholder="Ingresa los detalles"
               class="form-control"
               onChange={formik.handleChange}
             />
+
+            {formik.touched.detalle && formik.errors.detalle
+							? <div class="alert alert-danger" role="alert">
+                {formik.errors.detalle}
+              </div>
+							: null
+						}
           </div>
 
           <ButtonSubmit 

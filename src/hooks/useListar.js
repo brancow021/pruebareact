@@ -23,7 +23,8 @@ export const useListar = () => {
     return {
       data,
       error,
-      setEntitys
+      setEntitys,
+      entitys
     }
 }
 

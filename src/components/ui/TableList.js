@@ -1,7 +1,7 @@
 import React,{ memo } from 'react'
 import { useHistory, Redirect } from 'react-router-dom'
 
-export const TableList = memo(({ data = [] }) => {
+export const TableList = memo(({ data = [], OneEntity }) => {
 
   const history = useHistory()
 
@@ -9,7 +9,8 @@ export const TableList = memo(({ data = [] }) => {
     history.push({
       pathname: '/update', 
       data: item,
-      update: true
+      update: true,
+      Entity: OneEntity
     })
   }
 

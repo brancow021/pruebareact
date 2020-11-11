@@ -5,7 +5,7 @@ import { SelectData } from '../../ui/SelectData'
 import { TableList } from '../../ui/TableList'
 
 export const Home = () => {
-  const { data, error, setEntitys } = useListar()
+  const { data, error, setEntitys, entitys: OneEntity } = useListar()
   const { entitys } = useGetEntity();
   const [ListData, setListData] = useState([])
 
@@ -24,7 +24,8 @@ export const Home = () => {
           setEntitys={setEntitys}
         />
 
-        <TableList 
+        <TableList
+          OneEntity={OneEntity}
           data={ListData}
         />
       </div>

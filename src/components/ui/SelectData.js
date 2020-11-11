@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
-export const SelectData = ({entitys = [], setEntitys, formik}) => {
+export const SelectData = ({entitys = [], setEntitys, formik, entidad = 'Seleccionar'}) => {
+  const [value, setvalue] = useState(entidad)
+
 
   const handleSelect = (evt) => {
     const { value } = evt.target
@@ -8,7 +10,7 @@ export const SelectData = ({entitys = [], setEntitys, formik}) => {
       setEntitys(value)
 
     } else if(formik){
-      formik.values.entidad = value
+      setvalue(formik.values.entidad = value)
     }
   }
 
@@ -18,13 +20,11 @@ export const SelectData = ({entitys = [], setEntitys, formik}) => {
         <div className="form-group">
           <label>Entidades</label>
 
-          <select onChange={handleSelect} className="form-control">
+          <select onLoad={() => console.log('Cargando')} onChange={handleSelect} className="form-control">
           <option 
-            value="" 
-            selected 
-            disabled
+            value={entidad}
             hidden>
-            Seleccionar
+            {entidad === '' ? 'Seleccionar' : entidad}
 
           </option>
             {entitys.map((item) => (
